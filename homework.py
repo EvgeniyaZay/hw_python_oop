@@ -16,10 +16,10 @@ class InfoMessage:
     def get_message(self) -> str:
         return (
             f'Тип тренировки: {self.training_type}; '
-            f'Длительность:{self.duration: .3f} ч.; '
-            f'Дистанция:{self.distance: .3f} км; '
-            f'Ср. скорость:{self.speed: .3f} км/ч; '
-            f'Потрачено ккал:{self.calories: .3f}.'
+            f'Длительность: {self.duration:.3f} ч.; '
+            f'Дистанция: {self.distance:.3f} км; '
+            f'Ср. скорость: {self.speed:.3f} км/ч; '
+            f'Потрачено ккал: {self.calories:.3f}.'
         )
 
 
@@ -60,9 +60,10 @@ class Training:
 class Running(Training):
     """Тренировка: бег."""
     def get_spent_calories(self) -> float:
-        coeff_calorie_1 = 18
-        coeff_calorie_2 = 20
-        return ((coeff_calorie_1 * self.get_mean_speed() - coeff_calorie_2)
+        coeff_calorie_running_1 = 18
+        coeff_calorie_running_2 = 20
+        return ((coeff_calorie_running_1 * self.get_mean_speed()
+                - coeff_calorie_running_2)
                 * self.weight / self.M_IN_KM * (self.duration * self.MIN))
 
 
@@ -106,24 +107,30 @@ class Swimming(Training):
         return (self.action * self.LEN_STEP / self.M_IN_KM)
 
     def get_mean_speed(self) -> float:
-        return (self.length_pool * self.count_pool / self.M_IN_KM /
-                self.duration)
+        return (self.length_pool * self.count_pool / self.M_IN_KM
+                / self.duration)
 
     def get_spent_calories(self) -> float:
         coeff_calorie_swimming_1 = 1.1
         coeff_calorie__swimming_2 = 2
-        return ((self.get_mean_speed() + coeff_calorie_swimming_1) *
-                coeff_calorie__swimming_2 * self.weight)       
+        return ((self.get_mean_speed() + coeff_calorie_swimming_1)
+                * coeff_calorie__swimming_2 * self.weight)
 
 
 def read_package(workout_type: str, data: list) -> Training:
     """Прочитать данные полученные от датчиков."""
-    pass
+    workout_code = {
+        "SWM": Swimming,
+        "RUN": Running,
+        "WLK": SportsWalking
+    }
+    return workout_code[workout_type](*data)
 
 
 def main(training: Training) -> None:
     """Главная функция."""
-    pass
+    info = training.show_training_info()
+    print(info.get_message())
 
 
 if __name__ == '__main__':
